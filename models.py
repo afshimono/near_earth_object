@@ -45,9 +45,16 @@ class NearEarthObject:
         # You should coerce these values to their appropriate data type and
         # handle any edge cases, such as a empty name being represented by `None`
         # and a missing diameter being represented by `float('nan')`.
-        self.designation = info.get('designation', '')
+        self.designation = info.get('designation', None)
+        if self.designation == '':
+            self.designation = None
         self.name = info.get('name', None)
-        self.diameter = info.get('diameter', float('nan'))
+        if self.name == '':
+            self.name = None
+        try:
+            self.diameter = float(info.get('diameter', float('nan')))
+        except:
+            self.diameter = float('nan')
         self.hazardous = info.get('hazardous', False)
 
         # Create an empty initial collection of linked approaches.
@@ -99,8 +106,8 @@ class CloseApproach:
         self.time = info.get('time', None)
         if self.time:
             self.time = cd_to_datetime(self.time)
-        self.distance = info.get('distance', 0.0)
-        self.velocity = info.get('velocity', 0.0)
+        self.distance = float(info.get('distance', 0.0))
+        self.velocity = float(info.get('velocity', 0.0))
 
         # Create an attribute for the referenced NEO, originally None.
         self.neo = None
