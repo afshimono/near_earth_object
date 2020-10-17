@@ -27,6 +27,8 @@ def load_neos(neo_csv_path):
     result = []
     with open(neo_csv_path, newline="") as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
+        # skip header
+        next(csvreader)
         for row in csvreader:
             result.append(NearEarthObject(
                 designation=row[3], name=row[4], hazardous=(row[7] == 'Y'), diameter=row[15]))
