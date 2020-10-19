@@ -11,6 +11,7 @@ data on NEOs and close approaches extracted by `extract.load_neos` and
 
 You'll edit this file in Tasks 2 and 3.
 """
+import functools
 
 
 class NEODatabase:
@@ -101,4 +102,12 @@ class NEODatabase:
         """
         # TODO: Generate `CloseApproach` objects that match all of the filters.
         for approach in self._approaches:
-            yield approach
+            bool_list = list(map(lambda x: x(approach), filters))
+            if len(bool_list) > 1:
+                passed = functools.reduce(lambda a, b: a and b, bool_list)
+            elif len(bool_list) == 1:
+                passed = bool_list[0]
+            else:
+                passed = True
+            if passed:
+                yield approach
