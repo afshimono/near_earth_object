@@ -55,7 +55,11 @@ class NearEarthObject:
             self.diameter = float(info.get('diameter', float('nan')))
         except:
             self.diameter = float('nan')
-        self.hazardous = info.get('hazardous', False)
+        self.hazardous = info.get('hazardous', None)
+        if self.hazardous == 'Y':
+            self.hazardous = True
+        elif self.hazardous == 'N':
+            self.hazardous = False
 
         # Create an empty initial collection of linked approaches.
         self.approaches = []
