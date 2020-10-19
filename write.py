@@ -24,8 +24,16 @@ def write_to_csv(results, filename):
     :param results: An iterable of `CloseApproach` objects.
     :param filename: A Path-like object pointing to where the data should be saved.
     """
-    fieldnames = ('datetime_utc', 'distance_au', 'velocity_km_s', 'designation', 'name', 'diameter_km', 'potentially_hazardous')
+    fieldnames = ('datetime_utc', 'distance_au', 'velocity_km_s',
+                  'designation', 'name', 'diameter_km', 'potentially_hazardous')
     # TODO: Write the results to a CSV file, following the specification in the instructions.
+    with open(filename, 'w', newline='') as csvfile:
+        csv_writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        csv_writer.writeheader()
+        for closeapproach in results:
+            merged_dict = {**closeapproach.serialize(), **
+                           closeapproach.neo.serialize()}
+            csv_writer.writerow(merged_dict)
 
 
 def write_to_json(results, filename):
@@ -40,3 +48,12 @@ def write_to_json(results, filename):
     :param filename: A Path-like object pointing to where the data should be saved.
     """
     # TODO: Write the results to a JSON file, following the specification in the instructions.
+    result = []
+    with open(filename, 'w', newline='') as jsonfile:
+        for closeapproach in results:
+            merged_dict = {**closeapproach.serialize(), 'neo': {**
+                                                                closeapproach.neo.serialize()}}
+            result.append(merged_dict)
+        if len(merged_dict) == 1:
+            result = result[0]
+        json.dump(result, jsonfile)
