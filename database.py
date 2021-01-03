@@ -48,7 +48,7 @@ class NEODatabase:
         self._neo_by_designation = {v.designation: v for v in self._neos}
 
         for cao in self._approaches:
-            if self._neo_by_designation[cao._designation]:
+            if self._neo_by_designation.get(cao._designation):
                 cao.neo = self._neo_by_designation[cao._designation]
                 self._neo_by_designation[cao._designation].approaches.append(
                     cao)
@@ -66,7 +66,6 @@ class NEODatabase:
         :param designation: The primary designation of the NEO to search for.
         :return: The `NearEarthObject` with the desired primary designation, or `None`.
         """
-        # TODO: Fetch an NEO by its primary designation.
         return self._neo_by_designation.get(designation)
 
     def get_neo_by_name(self, name):
@@ -83,7 +82,6 @@ class NEODatabase:
         :param name: The name, as a string, of the NEO to search for.
         :return: The `NearEarthObject` with the desired name, or `None`.
         """
-        # TODO: Fetch an NEO by its name.
         return self._neo_by_name.get(name)
 
     def query(self, filters=()):
@@ -100,14 +98,6 @@ class NEODatabase:
         :param filters: A collection of filters capturing user-specified criteria.
         :return: A stream of matching `CloseApproach` objects.
         """
-        # TODO: Generate `CloseApproach` objects that match all of the filters.
         for approach in self._approaches:
-            bool_list = list(map(lambda x: x(approach), filters))
-            if len(bool_list) > 1:
-                passed = functools.reduce(lambda a, b: a and b, bool_list)
-            elif len(bool_list) == 1:
-                passed = bool_list[0]
-            else:
-                passed = True
-            if passed:
+            if all(f(approach) for f in filters):
                 yield approach
