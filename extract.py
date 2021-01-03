@@ -26,12 +26,10 @@ def load_neos(neo_csv_path):
     """
     result = []
     with open(neo_csv_path, newline="") as csvfile:
-        csvreader = csv.reader(csvfile, delimiter=',')
-        # skip header
-        next(csvreader)
+        csvreader = csv.DictReader(csvfile, delimiter=',')
         for row in csvreader:
             result.append(NearEarthObject(
-                designation=row[3], name=row[4], hazardous=(row[7] == 'Y'), diameter=row[15]))
+                designation=row['pdes'], name=row['name'], hazardous=(row['pha'] == 'Y'), diameter=row['diameter']))
     return result
 
 
@@ -45,6 +43,7 @@ def load_approaches(cad_json_path):
     with open(cad_json_path) as json_file:
         data = json.load(json_file)
         for item in data['data']:
+            item = dict(zip(data['fields'], item))
             result.append(CloseApproach(
-                designation=item[0], time=item[3], distance=item[4], velocity=item[7]))
+                designation=item['des'], time=item['cd'], distance=item['dist'], velocity=item['v_rel']))
     return result
