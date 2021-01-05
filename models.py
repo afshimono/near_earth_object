@@ -56,7 +56,7 @@ class NearEarthObject:
     @property
     def fullname(self):
         """Return a representation of the full name of this NEO."""
-        name = self.name if self.name else "EmptyName"
+        name = self.name or "EmptyName"
         return f'{self.designation} {name}'
 
     def __str__(self):
@@ -70,10 +70,12 @@ class NearEarthObject:
                 f"diameter={self.diameter:.3f}, hazardous={self.hazardous!r})")
 
     def serialize(self):
-        return {'designation': self.designation if self.designation else '',
-                'name': self.name if self.name else '',
-                'diameter_km': self.diameter if self.diameter else float('nan'),
-                'potentially_hazardous': self.hazardous}
+        return {
+            'designation': self.designation or '',
+            'name': self.name or '',
+            'diameter_km': self.diameter or float('nan'),
+            'potentially_hazardous': self.hazardous,
+        }
 
 
 class CloseApproach:
@@ -118,13 +120,13 @@ class CloseApproach:
         formatted string that can be used in human-readable representations and
         in serialization to CSV and JSON files.
         """
-        if self.time:
-            return_value = f'Time {datetime_to_str(self.time)}'
-            if self.neo:
-                return_value += f'Name {self.neo.name} Designation {self.neo.designation}'
-            return return_value
-        else:
+        if not self.time:
             return ''
+
+        return_value = f'Time {datetime_to_str(self.time)}'
+        if self.neo:
+            return_value += f'Name {self.neo.name} Designation {self.neo.designation}'
+        return return_value
 
     def __str__(self):
         """Return `str(self)`."""
@@ -136,6 +138,8 @@ class CloseApproach:
                 f"velocity={self.velocity:.2f}, neo={self.neo!r})")
 
     def serialize(self):
-        return {'datetime_utc': self.time.strftime("%Y-%m-%d %H:%M"),
-                'distance_au': self.distance if self.distance else float('nan'),
-                'velocity_km_s': self.velocity if self.velocity else float('nan')}
+        return {
+            'datetime_utc': self.time.strftime("%Y-%m-%d %H:%M"),
+            'distance_au': self.distance or float('nan'),
+            'velocity_km_s': self.velocity or float('nan'),
+        }
